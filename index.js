@@ -6,6 +6,9 @@ var validator = require('validator');
 
 // Query remote endpoint url and map response according passed options
 module.exports = function(url, options) {
+  var that = this;
+
+
   if(_.isUndefined(url) || _.isEmpty(url))
     throw new Error('URL is required');
 
@@ -21,7 +24,7 @@ module.exports = function(url, options) {
 
   return new Promise(function(RS, RJ) {
     request.get(url)
-      .end((function(E, R) {
+      .end(function(E, R) {
         if(E)
           RJ('End point request failed: ' + E);
 
@@ -29,11 +32,25 @@ module.exports = function(url, options) {
         RS({
           ckan: {
             '3.0': {
-              base: function(input) { return {}; },
-              tabular: function(input) { return {}; }
+              base: function(input) { return {
+                name            : '',
+                title           : '',
+                description     : '',
+                homepage        : '',
+                version         : '',
+                licences        : [],
+                author          : '',
+                contributors    : [],
+                resources       : [],
+                keywords        : [],
+                sources         : [],
+                image           : '',
+                base            : '',
+                dataDependencies: {}
+              }; }
             }
           }
-        });
-      }).bind(this));
+        }[that.options.source][that.options.version][that.options.datapackage](R.body));
+      });
   });
 }
