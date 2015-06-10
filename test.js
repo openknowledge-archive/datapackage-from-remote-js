@@ -32,8 +32,16 @@ describe('Datapackage from remote', function() {
 
   it('throw exception if url is invalid', function(done, err) {
     if(err) done(err);
-    false.should.be.true;
-    done();
+
+    try {
+      fromRemote('invalidurl');
+    } catch(exception) {
+      exception.message.should.be.not.empty;
+      exception.message.should.be.a('string');
+      done();
+    }
+
+    return;
   });
 
 

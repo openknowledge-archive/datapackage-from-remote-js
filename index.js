@@ -1,11 +1,16 @@
 var _ = require('underscore');
+var Promise = require('promise-polyfill');
 var request = require('superagent');
+var validator = require('validator');
 
 
 // Query remote endpoint url and map response according passed options
 module.exports = function(url, options) {
   if(_.isUndefined(url) || _.isEmpty(url))
     throw new Error('URL is required');
+
+  if(!validator.isURL(url))
+    throw new Error('URL "' + url + '" is invalid');
 
   return new Promise(function(RS, RJ) {
     request.get(url)
