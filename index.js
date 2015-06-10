@@ -12,6 +12,13 @@ module.exports = function(url, options) {
   if(!validator.isURL(url))
     throw new Error('URL "' + url + '" is invalid');
 
+  // Default options
+  this.options = _.extend({
+    datapackage: 'base',
+    source: 'ckan',
+    version: '3.0'
+  }, options);
+
   return new Promise(function(RS, RJ) {
     request.get(url)
       .end((function(E, R) {
