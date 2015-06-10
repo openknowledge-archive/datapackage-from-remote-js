@@ -50,7 +50,9 @@ module.exports = function(url, options) {
               }; }
             }
           }
-        }[that.options.source][that.options.version][that.options.datapackage](R.body));
+        }[that.options.source][that.options.version][
+          that.options.datapackage.replace('tabular', 'base')
+        ](R.body));
       });
   });
 }
