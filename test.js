@@ -1,6 +1,7 @@
 var assert = require('chai').assert;
 var chai = require('chai');
 var fromRemote = require('./index');
+var Promise = require('promise-polyfill');
 var request = require('superagent');
 var requestMock = require('superagent-mock');
 var should = require('chai').should();
@@ -47,7 +48,14 @@ describe('Datapackage from remote', function() {
 
   it('return Promise object', function(done, err) {
     if(err) done(err);
-    false.should.be.true;
+
+    requestMock(request, [{
+      callback: function (match, data) { return {text: data}; },
+      fixtures: function (match, params) { return JSON.stringify(ENDPOINT_RESPONSE); },
+      pattern: '.*'
+    }]);
+
+    fromRemote('http://valid.url.com').should.be.an.instanceOf(Promise);
     done();
   });
 
