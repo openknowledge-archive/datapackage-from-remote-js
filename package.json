@@ -1,0 +1,47 @@
+{
+  "name": "datapackage-from-remote",
+  "version": "0.0.1",
+  "description": "",
+  "keywords": [],
+  "main": "index.js",
+  "dependencies": {
+    "promise-polyfill": "^2.0.2",
+    "superagent": "^1.2.0",
+    "underscore": "^1.8.3",
+    "validator": "^3.40.0"
+  },
+  "devDependencies": {
+    "chai": "^3.0.0",
+    "chai-spies": "^0.6.0",
+    "mocha": "^2.2.5",
+    "query-string": "^2.3.0",
+    "superagent-mock": "^1.2.0"
+  },
+  "scripts": {
+    "test": "mocha ./"
+  },
+  "author": {
+    "name": "Open Knowledge",
+    "email": "info@okfn.org",
+    "url": "https://okfn.org/"
+  },
+  "contributors": [
+    {
+      "name": "Paul Walsh",
+      "email": "paulywalsh@gmail.com",
+      "url": "http://pwalsh.me/"
+    },
+    {
+      "name": "Artem Rudenko",
+      "email": "gvidon@ottofeller.com",
+      "url": "http://ottofeller.com/"
+    }
+  ],
+  "homepage": "https://github.com/okfn/datapackage-from-remote-js",
+  "bugs": "https://github.com/okfn/datapackage-from-remote-js/issues",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/okfn/datapackage-from-remote-js.git"
+  },
+  "license": "MIT"
+}
