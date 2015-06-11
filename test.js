@@ -48,8 +48,8 @@ describe('Datapackage from remote', function() {
     if(err) done(err);
 
     requestMock(request, [{
-      callback: function (match, data) { return {text: data}; },
-      fixtures: function (match, params) { return JSON.stringify(TEST_DATA.CKAN_V3_ENDPOINT_RESPONSE); },
+      callback: function (match, data) { return {body: data}; },
+      fixtures: function (match, params) { return TEST_DATA.CKAN_V3_ENDPOINT_RESPONSE; },
       pattern: '.*'
     }]);
 
@@ -59,13 +59,31 @@ describe('Datapackage from remote', function() {
 
   it('map CKAN version 3 into base datapackage', function(done, err) {
     if(err) done(err);
-    false.should.be.true;
-    done();
+
+    requestMock(request, [{
+      callback: function (match, data) { return {body: data}; },
+      fixtures: function (match, params) { return TEST_DATA.CKAN_V3_ENDPOINT_RESPONSE; },
+      pattern: '.*'
+    }]);
+
+    fromRemote('http://valid.url.com').then(function(DP) {
+      DP.should.be.deep.equal(TEST_DATA.CKAN_V3_BASE_DATAPACKAGE);
+      done();
+    });
   });
 
   it('map CKAN version 3 into tabular datapackage', function(done, err) {
     if(err) done(err);
-    false.should.be.true;
-    done();
+
+    requestMock(request, [{
+      callback: function (match, data) { return {body: data}; },
+      fixtures: function (match, params) { return TEST_DATA.CKAN_V3_ENDPOINT_RESPONSE; },
+      pattern: '.*'
+    }]);
+
+    fromRemote('http://valid.url.com', {datapackage: 'tabular'}).then(function(DP) {
+      DP.should.be.deep.equal(TEST_DATA.CKAN_V3_BASE_DATAPACKAGE);
+      done();
+    });
   });
 });

@@ -32,22 +32,34 @@ module.exports = function(url, options) {
         RS({
           ckan: {
             '3.0': {
-              base: function(input) { return {
-                name            : '',
-                title           : '',
-                description     : '',
-                homepage        : '',
-                version         : '',
-                licences        : [],
-                author          : '',
-                contributors    : [],
-                resources       : [],
-                keywords        : [],
-                sources         : [],
-                image           : '',
-                base            : '',
-                dataDependencies: {}
-              }; }
+              base: function(input) {
+                var result = input.result;
+
+
+                return {
+                  name            : result.name,
+                  title           : result.title,
+                  description     : result.notes,
+                  homepage        : '',
+                  version         : result.version,
+                  licences        : [{id: result.license_id, url: result.license_url}],
+                  author          : _.compact([result.author, result.author_email]).join(' '),
+                  contributors    : [],
+                  resources       : [],
+                  sources         : [],
+                  image           : '',
+                  base            : '',
+                  dataDependencies: {},
+                  keywords        : _.pluck(result.tags, 'name'),
+
+                  resources: result.resources.map(function(R) { return {
+                    hash     : R.hash,
+                    mediatype: R.format,
+                    name     : R.name,
+                    url      : R.url
+                  }; })
+                };
+              }
             }
           }
         }[that.options.source][that.options.version][
