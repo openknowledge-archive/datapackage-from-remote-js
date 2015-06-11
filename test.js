@@ -5,8 +5,7 @@ var Promise = require('promise-polyfill');
 var request = require('superagent');
 var requestMock = require('superagent-mock');
 var should = require('chai').should();
-
-var ENDPOINT_RESPONSE = {};
+var TEST_DATA = require('./test-data');
 
 
 describe('Datapackage from remote', function() {
@@ -50,7 +49,7 @@ describe('Datapackage from remote', function() {
 
     requestMock(request, [{
       callback: function (match, data) { return {text: data}; },
-      fixtures: function (match, params) { return JSON.stringify(ENDPOINT_RESPONSE); },
+      fixtures: function (match, params) { return JSON.stringify(TEST_DATA.CKAN_V3_ENDPOINT_RESPONSE); },
       pattern: '.*'
     }]);
 
