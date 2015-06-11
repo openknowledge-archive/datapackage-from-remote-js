@@ -45,7 +45,6 @@ describe('Datapackage from remote', function() {
     return;
   });
 
-
   it('return Promise object', function(done, err) {
     if(err) done(err);
 
