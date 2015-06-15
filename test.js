@@ -86,4 +86,9 @@ describe('Datapackage from remote', function() {
       done();
     });
   });
+
+  it('infer schema for resources with no schema specified', function(done, err) {
+    if(err) done(err);
+    true.should.be.false;
+  });
 });
