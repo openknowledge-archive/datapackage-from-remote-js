@@ -1,3 +1,4 @@
+var _ = require('underscore');
 var assert = require('chai').assert;
 var chai = require('chai');
 var fromRemote = require('./index');
@@ -9,6 +10,18 @@ var TEST_DATA = require('./test-data');
 
 
 describe('Datapackage from remote', function() {
+  // Do not test schema infer in some test case
+  var responseWithSchema = _.extend(
+    {}, TEST_DATA.CKAN_V3_ENDPOINT_RESPONSE,
+
+    {result: _.extend({}, TEST_DATA.CKAN_V3_ENDPOINT_RESPONSE.result, {
+      resources: TEST_DATA.CKAN_V3_ENDPOINT_RESPONSE.result.resources.map(function(R) {
+        return _.extend({}, R, {schema: TEST_DATA.VALID_TABLE_SCHEMA});
+      })
+    })}
+  );
+
+
   it('throw exception if no url or empty url passed in params', function(done, err) {
     if(err) done(err);
 
@@ -62,7 +75,7 @@ describe('Datapackage from remote', function() {
 
     requestMock(request, [{
       callback: function (match, data) { return {body: data}; },
-      fixtures: function (match, params) { return TEST_DATA.CKAN_V3_ENDPOINT_RESPONSE; },
+      fixtures: function (match, params) { return responseWithSchema; },
       pattern: '.*'
     }]);
 
@@ -77,7 +90,7 @@ describe('Datapackage from remote', function() {
 
     requestMock(request, [{
       callback: function (match, data) { return {body: data}; },
-      fixtures: function (match, params) { return TEST_DATA.CKAN_V3_ENDPOINT_RESPONSE; },
+      fixtures: function (match, params) { return responseWithSchema; },
       pattern: '.*'
     }]);
 

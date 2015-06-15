@@ -83,7 +83,7 @@ module.exports.CKAN_V3_ENDPOINT_RESPONSE = {
         'state': 'active',
         'hash': '321',
         'description': '',
-        'format': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        'format': 'text/csv',
         'tracking_summary': {'total': 0, 'recent': 0},
         'mimetype_inner': null,
         'mimetype': null,
@@ -229,16 +229,16 @@ module.exports.CKAN_V3_BASE_DATAPACKAGE = {
   'resources': [
     {
       'name': 'Central Informatics Organisation',
-      'url': 'https://ckannet-storage.commondatastorage.googleapis.com/2015-06-04T09:12:06.147Z/populationnumber-by-governorates-age-group-gender.xlsx',
-      'mediatype': 'microsoft excel',
+      'url': 'https://ckannet-storage.commondatastorage.googleapis.com/2015-06-04T09:12:06.147Z/populationnumber-by-governorates-age-group-gender.csv',
+      'mediatype': 'text/csv',
       'hash': '123',
       'schema': module.exports.VALID_TABLE_SCHEMA
     },
 
     {
       'name': null,
-      'url': 'https://ckannet-storage.commondatastorage.googleapis.com/2015-06-04T09:12:06.147Z/populationnumber-by-governorates-age-group-gender-3.xlsx',
-      'mediatype': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      'url': 'https://ckannet-storage.commondatastorage.googleapis.com/2015-06-04T09:12:06.147Z/populationnumber-by-governorates-age-group-gender-3.csv',
+      'mediatype': 'text/csv',
       'hash': '321',
       'schema': module.exports.VALID_TABLE_SCHEMA
     },

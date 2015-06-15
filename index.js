@@ -56,6 +56,7 @@ module.exports = function(url, options) {
                     hash     : R.hash,
                     mediatype: R.format,
                     name     : R.name,
+                    schema   : R.schema,
                     url      : R.url
                   }; })
                 };
