@@ -1,3 +1,30 @@
+module.exports.VALID_TABLE_SCHEMA = {
+  'fields': [
+    {
+      'name': 'id',
+      'title': 'ID',
+      'type': 'integer',
+      'description': 'The id.'
+    },
+
+    {
+      'name': 'name',
+      'title': 'Name',
+      'type': 'string',
+      'description': 'The name.'
+    },
+
+    {
+      'name': 'age',
+      'title': 'Age',
+      'type': 'integer',
+      'description': 'The age.'
+    }
+  ],
+  
+  'primaryKey': 'id'
+};
+
 module.exports.CKAN_V3_ENDPOINT_RESPONSE = {
   'help': 'Return the metadata of a dataset (package) and its resources.\n\n    :param id: the id or name of the dataset\n    :type id: string\n\n    :rtype: dictionary\n\n    ',
   'success': true,
@@ -68,7 +95,8 @@ module.exports.CKAN_V3_ENDPOINT_RESPONSE = {
         'last_modified': null,
         'position': 1,
         'revision_id': '41366b22-27eb-49c9-90f7-0a71e9a9c8a2',
-        'resource_type': 'file.upload'
+        'resource_type': 'file.upload',
+        'schema': {'invalid': 'schema example'}
       },
 
       {
@@ -91,7 +119,8 @@ module.exports.CKAN_V3_ENDPOINT_RESPONSE = {
         'webstore_url': null,
         'last_modified': null,
         'position': 2, 'revision_id': '22e49b1c-12df-4b2f-9ce5-efc5bf2e5585',
-        'resource_type': 'file.upload'
+        'resource_type': 'file.upload',
+        'schema': module.exports.VALID_TABLE_SCHEMA
       }
     ],
 
