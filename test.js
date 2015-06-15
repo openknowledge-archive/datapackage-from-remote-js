@@ -10,13 +10,13 @@ var TEST_DATA = require('./test-data');
 
 
 describe('Datapackage from remote', function() {
-  // Do not test schema infer in some test case
+  // Test schema infer only in one specific test case
   var responseWithSchema = _.extend(
     {}, TEST_DATA.CKAN_V3_ENDPOINT_RESPONSE,
 
     {result: _.extend({}, TEST_DATA.CKAN_V3_ENDPOINT_RESPONSE.result, {
       resources: TEST_DATA.CKAN_V3_ENDPOINT_RESPONSE.result.resources.map(function(R) {
-        return _.extend({}, R, {schema: TEST_DATA.VALID_TABLE_SCHEMA});
+        return _.extend({}, R, R.format == 'text/csv' && {schema: TEST_DATA.VALID_TABLE_SCHEMA});
       })
     })}
   );
@@ -111,15 +111,15 @@ describe('Datapackage from remote', function() {
 
     // Resource with empty schema, but in csv format    
     requestMock(request, [{
-      callback: function (match, data) { return {body: data}; },
-      fixtures: function (match, params) { return TEST_DATA.VALID_TABLE_SCHEMA; },
+      callback: function (match, data) { return {text: data}; },
+      fixtures: function (match, params) { return TEST_DATA.VALID_CSV; },
       pattern: 'https://ckannet-storage.commondatastorage.googleapis.com/2015-06-04T09:12:06.147Z/populationnumber-by-governorates-age-group-gender.csv'
     }]);
     
     // Resource in csv format with invalid schema
     requestMock(request, [{
-      callback: function (match, data) { return {body: data}; },
-      fixtures: function (match, params) { return TEST_DATA.VALID_TABLE_SCHEMA; },
+      callback: function (match, data) { return {text: data}; },
+      fixtures: function (match, params) { return TEST_DATA.VALID_CSV; },
       pattern: 'https://ckannet-storage.commondatastorage.googleapis.com/2015-06-04T09:12:06.147Z/populationnumber-by-governorates-age-group-gender-3.csv'
     }]);
 
