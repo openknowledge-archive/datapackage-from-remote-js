@@ -87,8 +87,32 @@ describe('Datapackage from remote', function() {
     });
   });
 
-  it('infer schema for resources with no schema specified', function(done, err) {
+  it('infer schema for resources with no schema specified or invalid schema', function(done, err) {
     if(err) done(err);
-    true.should.be.false;
+
+    requestMock(request, [{
+      callback: function (match, data) { return {body: data}; },
+      fixtures: function (match, params) { return TEST_DATA.CKAN_V3_ENDPOINT_RESPONSE; },
+      pattern: '.*'
+    }]);
+
+    // Resource with empty schema, but in csv format    
+    requestMock(request, [{
+      callback: function (match, data) { return {body: data}; },
+      fixtures: function (match, params) { return TEST_DATA.VALID_TABLE_SCHEMA; },
+      pattern: 'https://ckannet-storage.commondatastorage.googleapis.com/2015-06-04T09:12:06.147Z/populationnumber-by-governorates-age-group-gender.csv'
+    }]);
+    
+    // Resource in csv format with invalid schema
+    requestMock(request, [{
+      callback: function (match, data) { return {body: data}; },
+      fixtures: function (match, params) { return TEST_DATA.VALID_TABLE_SCHEMA; },
+      pattern: 'https://ckannet-storage.commondatastorage.googleapis.com/2015-06-04T09:12:06.147Z/populationnumber-by-governorates-age-group-gender-3.csv'
+    }]);
+
+    fromRemote('http://valid.url.com').then(function(DP) {
+      DP.should.be.deep.equal(TEST_DATA.CKAN_V3_BASE_DATAPACKAGE);
+      done();
+    });
   });
 });
