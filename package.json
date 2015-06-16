@@ -1,6 +1,6 @@
 {
   "name": "datapackage-from-remote",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Create a Data Package from data at a remote location.",
   "keywords": ["open data", "open knowledge", "data package"],
   "main": "index.js",
