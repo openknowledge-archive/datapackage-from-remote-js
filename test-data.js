@@ -2,9 +2,9 @@ module.exports.VALID_CSV = 'id,name,age\n1,John,33\n7,Jane,25';
 
 module.exports.VALID_TABLE_SCHEMA = {
   'fields': [
-    {'name': 'id', 'type': 'integer'},
-    {'name': 'name', 'type': 'string'},
-    {'name': 'age', 'type': 'integer'}
+    {'name': 'id', 'type': 'integer', 'title': '', 'description': '', 'format': 'default'},
+    {'name': 'name', 'type': 'string', 'title': '', 'description': '', 'format': 'default'},
+    {'name': 'age', 'type': 'integer', 'title': '', 'description': '', 'format': 'default'}
   ]
 };
 

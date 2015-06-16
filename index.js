@@ -1,7 +1,7 @@
 var _ = require('underscore');
 var async = require('async');
-var getUri = require('get-uri');
-var jtsInfer = require('jts-infer');
+var csv = require('csv');
+var infer = require('json-table-schema').infer;
 var Promise = require('promise-polyfill');
 var request = require('superagent');
 var validator = require('validator');
@@ -69,15 +69,12 @@ module.exports = function(url, options) {
 
                   // Not sure which exactly .resources[] property specifies mime type
                   if(!schema && _.contains([R.format, R.mimetype], 'text/csv'))
-                    request.get(R.url).end(function(E, R) {
-                      // jts-infer require streamable input
-                      getUri('data:text/csv:utf-8' + ',' + R.text, function (ER, ST) {
-                        jtsInfer(ST, function(EJ, S, SR) {
-                          if(EJ)
-                            CB(null, resource);
+                    request.get(R.url).end(function(E, RS) {
+                      csv.parse(RS.text, function(EJ, D) {
+                        if(EJ)
+                          CB(null, resource);
 
-                          CB(null, _.extend(resource, {schema: S}));
-                        });
+                        CB(null, _.extend(resource, {schema: infer(D[0], _.rest(D))}));
                       });
                     });
 
