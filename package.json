@@ -5,6 +5,9 @@
   "keywords": ["open data", "open knowledge", "data package"],
   "main": "index.js",
   "dependencies": {
+    "async": "^1.2.1",
+    "csv": "^0.4.5",
+    "json-table-schema": "0.0.2-alpha",
     "promise-polyfill": "^2.0.2",
     "superagent": "^1.2.0",
     "underscore": "^1.8.3",
@@ -14,7 +17,9 @@
     "chai": "^3.0.0",
     "chai-spies": "^0.6.0",
     "mocha": "^2.2.5",
+    "promise-polyfill": "^2.0.2",
     "query-string": "^2.3.0",
+    "superagent": "^1.2.0",
     "superagent-mock": "^1.2.0"
   },
   "scripts": {
