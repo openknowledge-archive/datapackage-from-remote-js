@@ -1,8 +1,8 @@
 {
   "name": "datapackage-from-remote",
   "version": "0.0.1",
-  "description": "",
-  "keywords": [],
+  "description": "Create a Data Package from data at a remote location.",
+  "keywords": ["open data", "open knowledge", "data package"],
   "main": "index.js",
   "dependencies": {
     "promise-polyfill": "^2.0.2",
