@@ -8,7 +8,7 @@
     "async": "^1.2.1",
     "csv": "^0.4.5",
     "json-table-schema": "0.0.2-alpha",
-    "promise-polyfill": "^2.0.2",
+	"bluebird": "^2.9.30",
     "superagent": "^1.2.0",
     "underscore": "^1.8.3",
     "validator": "^3.40.0"

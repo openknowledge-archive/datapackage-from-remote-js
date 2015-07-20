@@ -2,7 +2,7 @@ var _ = require('underscore');
 var async = require('async');
 var csv = require('csv');
 var infer = require('json-table-schema').infer;
-var Promise = require('promise-polyfill');
+var Promise = require('bluebird');
 var request = require('superagent');
 var validator = require('validator');
 
