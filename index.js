@@ -84,11 +84,11 @@ module.exports = function(url, options) {
               }
             }
           },
-		dkan: {
+          dkan: {
             '3.0': {
               base: function(input) {
-				
-				//work around DKAN's results array implementation of package_show api
+
+                //work around DKAN's results array implementation of package_show api
                 var result = input.result[0];
 
                 var datapackage = {
@@ -137,8 +137,7 @@ module.exports = function(url, options) {
               }
             }
           }
-        
-		})[that.options.source][that.options.version][
+        })[that.options.source][that.options.version][
           that.options.datapackage.replace('tabular', 'base')
         ](R.body);
       });
