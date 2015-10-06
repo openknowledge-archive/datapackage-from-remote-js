@@ -7,6 +7,52 @@ var request = require('superagent');
 var validator = require('validator');
 
 
+function fromOpenData(input, callback) {
+  var datapackage = {
+    name            : input.name,
+    title           : input.title,
+    description     : input.notes,
+    homepage        : '',
+    version         : input.version,
+    licences        : [{id: input.license_id, url: input.license_url}],
+    author          : _.compact([input.author, input.author_email]).join(' '),
+    contributors    : [],
+    sources         : [],
+    image           : '',
+    base            : '',
+    dataDependencies: {},
+    keywords        : _.pluck(input.tags, 'name')
+  };
+
+
+  // Get each resource in async and infer it's schema
+  async.map(input.resources, function(R, CB) {
+    var resource = {
+      hash     : R.hash,
+      mediatype: R.format,
+      name     : R.name,
+      url      : R.url
+    };
+
+    var schema = _.isObject(R.schema) && !_.isArray(R.schema) && R.schema;
+
+
+    // Not sure which exactly .resources[] property specifies mime type
+    if(!schema && _.contains([R.format, R.mimetype], 'text/csv'))
+      request.get(R.url).end(function(E, RS) {
+        csv.parse(RS.text, function(EJ, D) {
+          if(EJ)
+            CB(null, resource);
+
+          CB(null, _.extend(resource, {schema: infer(D[0], _.rest(D))}));
+        });
+      });
+
+    else
+      CB(null, _.extend(resource, schema && {schema: schema}));
+  }, function(E, R) { callback(_.extend(datapackage, {resources: R})); });
+}
+
 // Query remote endpoint url and map response according passed options
 module.exports = function(url, options) {
   var that = this;
@@ -35,53 +81,13 @@ module.exports = function(url, options) {
         ({
           ckan: {
             '3.0': {
-              base: function(input) {
-                var result = input.result;
+              base: function(input) { fromOpenData(input.result, RS); }
+            }
+          },
 
-                var datapackage = {
-                  name            : result.name,
-                  title           : result.title,
-                  description     : result.notes,
-                  homepage        : '',
-                  version         : result.version,
-                  licences        : [{id: result.license_id, url: result.license_url}],
-                  author          : _.compact([result.author, result.author_email]).join(' '),
-                  contributors    : [],
-                  sources         : [],
-                  image           : '',
-                  base            : '',
-                  dataDependencies: {},
-                  keywords        : _.pluck(result.tags, 'name')
-                };
-
-
-                // Get each resource in async and infer it's schema
-                async.map(result.resources, function(R, CB) {
-                  var resource = {
-                    hash     : R.hash,
-                    mediatype: R.format,
-                    name     : R.name,
-                    url      : R.url
-                  };
-
-                  var schema = _.isObject(R.schema) && !_.isArray(R.schema) && R.schema;
-
-
-                  // Not sure which exactly .resources[] property specifies mime type
-                  if(!schema && _.contains([R.format, R.mimetype], 'text/csv'))
-                    request.get(R.url).end(function(E, RS) {
-                      csv.parse(RS.text, function(EJ, D) {
-                        if(EJ)
-                          CB(null, resource);
-
-                        CB(null, _.extend(resource, {schema: infer(D[0], _.rest(D))}));
-                      });
-                    });
-
-                  else
-                    CB(null, _.extend(resource, schema && {schema: schema}));
-                }, function(E, R) { RS(_.extend(datapackage, {resources: R})); });
-              }
+          dkan: {
+            '3.0': {
+              base: function(input) { fromOpenData(input.result[0], RS); }
             }
           }
         })[that.options.source][that.options.version][
