@@ -39,7 +39,7 @@ function fromOpenData(input, callback) {
 
     // Not sure which exactly .resources[] property specifies mime type
     if(!schema && _.contains([R.format, R.mimetype], 'text/csv'))
-      request.get(R.url).end(function(E, RS) {
+      request.get('http://crossorigin.me/' + R.url).end(function(E, RS) {
         csv.parse(RS.text, function(EJ, D) {
           if(EJ)
             CB(null, resource);
