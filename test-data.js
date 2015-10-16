@@ -214,7 +214,7 @@ module.exports.DKAN_V3_ENDPOINT_RESPONSE = {
     'author': 'Arnold',
     'author_email': 'opendata@cio.gov.bh',
     'state': 'active',
-    'license_id': 'cc-by-sa',
+    'license_title': 'Some title',
     'type': 'dataset',
 
     'resources': [
@@ -435,7 +435,7 @@ module.exports.DKAN_V3_BASE_DATAPACKAGE = {
   'version': null,
 
   'licences': [
-    {'id': 'cc-by-sa', 'url': 'http://www.opendefinition.org/licenses/cc-by-sa'}
+    {'id': null, 'url': 'http://www.opendefinition.org/licenses/cc-by-sa'}
   ],
 
   'author': 'Arnold opendata@cio.gov.bh',
