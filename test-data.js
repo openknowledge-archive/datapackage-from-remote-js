@@ -172,7 +172,7 @@ module.exports.CKAN_V3_ENDPOINT_RESPONSE = {
     'num_tags': 6,
     'name': 'population-number-by-governorate-age-group-and-gender-2010-2014',
     'isopen': true,
-    'url': null,
+    'url': 'http://ckan.com/example/url',
     'notes': 'Total Population of Bahrain by Governorate, Age group, Gender and Constituency 2010 - 2014 ',
     'title': 'Population Number by Governorate, Age group and Gender 2010 - 2014',
     'extras': [],
@@ -358,7 +358,7 @@ module.exports.DKAN_V3_ENDPOINT_RESPONSE = {
     'num_tags': 6,
     'name': 'population-number-by-governorate-age-group-and-gender-2010-2014',
     'isopen': true,
-    'url': null,
+    'url': 'http://dkan.com/example/url',
     'description': 'DKAN description',
     'title': 'Population Number by Governorate, Age group and Gender 2010 - 2014',
     'extras': [],
@@ -386,7 +386,7 @@ module.exports.CKAN_V3_BASE_DATAPACKAGE = {
   'name': 'population-number-by-governorate-age-group-and-gender-2010-2014',
   'title': 'Population Number by Governorate, Age group and Gender 2010 - 2014',
   'description': 'Total Population of Bahrain by Governorate, Age group, Gender and Constituency 2010 - 2014 ',
-  'homepage': '',
+  'homepage': 'http://ckan.com/example/url',
   'version': null,
 
   'licences': [
@@ -432,7 +432,7 @@ module.exports.DKAN_V3_BASE_DATAPACKAGE = {
   'name': 'population-number-by-governorate-age-group-and-gender-2010-2014',
   'title': 'Population Number by Governorate, Age group and Gender 2010 - 2014',
   'description': 'DKAN description',
-  'homepage': '',
+  'homepage': 'http://dkan.com/example/url',
   'version': null,
 
   'licences': [
