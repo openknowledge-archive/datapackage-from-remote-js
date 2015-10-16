@@ -1,5 +1,7 @@
 var _ = require('underscore');
+var CKAN_LATEST_VER = '3.0';
 var csv = require('csv');
+var DKAN_LATEST_VER = '3.0';
 var infer = require('json-table-schema').infer;
 var MAX_CSV_ROWS = 100;
 var Promise = require('bluebird');
@@ -58,6 +60,8 @@ function fromOpenData(input, callback) {
 // Query remote endpoint url and map response according passed options
 module.exports = function(url, options) {
   var that = this;
+  var version = _.result(options, 'version');
+  var latestVersion = _.result(options, 'source') === 'dkan' ? DKAN_LATEST_VER : CKAN_LATEST_VER;
 
 
   if(_.isUndefined(url) || _.isEmpty(url))
@@ -70,7 +74,9 @@ module.exports = function(url, options) {
   this.options = _.extend({
     datapackage: 'base',
     source: 'ckan',
-    version: '3.0'
+
+    // Translate alias into certain version
+    version: version === 'latest' ? latestVersion : (version || latestVersion)
   }, options);
 
   return new Promise(function(RS, RJ) {
@@ -81,17 +87,13 @@ module.exports = function(url, options) {
 
         // Mapping routines
         ({
-          ckan: {
-            '3.0': {
-              base: function(input) { fromOpenData(input.result, RS); }
-            }
-          },
+          ckan: _.chain(['1.0', '2.0', '3.0']).map(function(V) { return [V, {
+            base: function(input) { fromOpenData(input.result, RS); }
+          }]; }).object().value(),
 
-          dkan: {
-            '3.0': {
-              base: function(input) { fromOpenData(input.result[0], RS); }
-            }
-          }
+          dkan: _.chain(['1.0', '2.0', '3.0']).map(function(V) { return [V, {
+            base: function(input) { fromOpenData(input.result[0], RS); }
+          }]; }).object().value()
         })[that.options.source][that.options.version][
           that.options.datapackage.replace('tabular', 'base')
         ](R.body);
