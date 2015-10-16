@@ -1,3 +1,5 @@
+var _ = require('underscore');
+
 module.exports.VALID_CSV = 'id,name,age\n1,John,33\n7,Jane,25';
 
 module.exports.VALID_TABLE_SCHEMA = {
@@ -193,6 +195,10 @@ module.exports.CKAN_V3_ENDPOINT_RESPONSE = {
     'revision_id': '5bc16e4e-7ae5-4ded-8ca4-bc79f7532485'
   }
 };
+
+module.exports.DKAN_V3_ENDPOINT_RESPONSE = _.extend({}, module.exports.CKAN_V3_ENDPOINT_RESPONSE, {
+  result: [module.exports.CKAN_V3_ENDPOINT_RESPONSE.result]
+});
 
 module.exports.CKAN_V3_BASE_DATAPACKAGE = {
   'name': 'population-number-by-governorate-age-group-and-gender-2010-2014',
