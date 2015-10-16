@@ -164,6 +164,21 @@ describe('Datapackage from remote', function() {
       .then(function() { done(); });
   });
 
+  it('translates "latest" value of version option into certain version', function(done, err) {
+    if(err) done(err);
+
+    requestMock(request, [{
+      callback: function (match, data) { return {body: data}; },
+      fixtures: function (match, params) { return responseWithSchemaCKAN; },
+      pattern: '.*'
+    }]);
+
+    fromRemote('http://valid.url.com', {version: 'latest'}).then(function(DP) {
+      DP.should.be.deep.equal(TEST_DATA.CKAN_V3_BASE_DATAPACKAGE);
+      done();
+    });
+  });
+
   it('infer schema for resources with no schema specified or invalid schema', function(done, err) {
     if(err) done(err);
 

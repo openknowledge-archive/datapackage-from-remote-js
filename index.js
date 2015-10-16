@@ -61,7 +61,7 @@ function fromOpenData(input, callback) {
 module.exports = function(url, options) {
   var that = this;
   var version = _.result(options, 'version');
-  var latestVersion = _.result(options, 'source') === 'dkan' ? DKAN_LATEST_VER : CKAN_LATEST_VER;
+  var latestVersion = (_.result(options, 'source') === 'dkan') ? DKAN_LATEST_VER : CKAN_LATEST_VER;
 
 
   if(_.isUndefined(url) || _.isEmpty(url))
@@ -76,8 +76,11 @@ module.exports = function(url, options) {
     source: 'ckan',
 
     // Translate alias into certain version
-    version: version === 'latest' ? latestVersion : (version || latestVersion)
+    version: version || latestVersion
   }, options);
+
+  // Replace alias with certain version
+  this.options.version = (version === 'latest') ? latestVersion : this.options.version;
 
   return new Promise(function(RS, RJ) {
     request.get(url)
