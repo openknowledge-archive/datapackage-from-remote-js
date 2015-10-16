@@ -11,7 +11,7 @@ var validator = require('validator');
 
 function fromOpenData(input, callback) {
   var datapackage = {
-    name            : input.name,
+    name            : input.name || input.id,
     title           : input.title,
     description     : input.notes,
     homepage        : '',
