@@ -70,7 +70,7 @@ describe('Datapackage from remote', function() {
     done();
   });
 
-  it('map CKAN version 3 into base datapackage', function(done, err) {
+  it('map CKAN versions 1.0, 2.0 and 3.0 into base datapackage', function(done, err) {
     if(err) done(err);
 
     requestMock(request, [{
@@ -79,13 +79,19 @@ describe('Datapackage from remote', function() {
       pattern: '.*'
     }]);
 
-    fromRemote('http://valid.url.com').then(function(DP) {
-      DP.should.be.deep.equal(TEST_DATA.CKAN_V3_BASE_DATAPACKAGE);
-      done();
-    });
+    Promise.each(['1.0', '2.0', '3.0'], function(V) {
+      return new Promise(function(RS, RJ) {
+        fromRemote('http://valid.url.com', {version: V}).then(function(DP) {
+          DP.should.be.deep.equal(TEST_DATA.CKAN_V3_BASE_DATAPACKAGE);
+          RS(true);
+        });
+      });
+    })
+      .catch(function(E) { console.log(E); })
+      .then(function() { done(); });
   });
 
-  it('map CKAN version 3 into tabular datapackage', function(done, err) {
+  it('map CKAN versions 1.0, 2.0 and 3.0 into tabular datapackage', function(done, err) {
     if(err) done(err);
 
     requestMock(request, [{
@@ -94,10 +100,16 @@ describe('Datapackage from remote', function() {
       pattern: '.*'
     }]);
 
-    fromRemote('http://valid.url.com', {datapackage: 'tabular'}).then(function(DP) {
-      DP.should.be.deep.equal(TEST_DATA.CKAN_V3_BASE_DATAPACKAGE);
-      done();
-    });
+    Promise.each(['1.0', '2.0', '3.0'], function(V) {
+      return new Promise(function(RS, RJ) {
+        fromRemote('http://valid.url.com', {datapackage: 'tabular', version: V}).then(function(DP) {
+          DP.should.be.deep.equal(TEST_DATA.CKAN_V3_BASE_DATAPACKAGE);
+          RS(true);
+        });
+      });
+    })
+      .catch(function(E) { console.log(E); })
+      .then(function() { done(); });
   });
 
   it('infer schema for resources with no schema specified or invalid schema', function(done, err) {
