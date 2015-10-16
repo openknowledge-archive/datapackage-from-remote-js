@@ -1,5 +1,4 @@
 var _ = require('underscore');
-var async = require('async');
 var csv = require('csv');
 var infer = require('json-table-schema').infer;
 var MAX_CSV_ROWS = 100;
@@ -26,8 +25,8 @@ function fromOpenData(input, callback) {
   };
 
 
-  // Get each resource in async and infer it's schema
-  async.map(input.resources, function(R, CB) {
+  // Get each resource and infer it's schema
+  Promise.map(input.resources, function(R) {
     var resource = {
       hash     : R.hash,
       mediatype: R.format,
@@ -40,18 +39,20 @@ function fromOpenData(input, callback) {
 
     // Not sure which exactly .resources[] property specifies mime type
     if(!schema && _.contains([R.format, R.mimetype], 'text/csv'))
-      request.get('http://crossorigin.me/' + R.url).end(function(E, RS) {
-        csv.parse(_.first((RS.text || '').split('\n'), MAX_CSV_ROWS).join('\n'), function(EJ, D) {
-          if(EJ)
-            CB(null, resource);
+      return new Promise(function(RS, RJ) {
+        request.get('http://crossorigin.me/' + R.url).end(function(E, RES) {
+          csv.parse(_.first((RES.text || '').split('\n'), MAX_CSV_ROWS).join('\n'), function(EJ, D) {
+            if(EJ)
+              return RJ(EJ);
 
-          CB(null, _.extend(resource, {schema: infer(D[0], _.rest(D))}));
+            return RS(_.extend(resource, {schema: infer(D[0], _.rest(D))}));
+          });
         });
       });
 
     else
-      CB(null, _.extend(resource, schema && {schema: schema}));
-  }, function(E, R) { callback(_.extend(datapackage, {resources: R})); });
+      return _.extend(resource, schema && {schema: schema});
+  }).then(function(R) { callback(_.extend(datapackage, {resources: R})); });
 }
 
 // Query remote endpoint url and map response according passed options
