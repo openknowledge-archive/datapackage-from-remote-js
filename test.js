@@ -134,7 +134,7 @@ describe('Datapackage from remote', function() {
     Promise.each(['1.0', '2.0', '3.0'], function(V) {
       return new Promise(function(RS, RJ) {
         fromRemote('http://valid.url.com', {source: 'dkan', version: V}).then(function(DP) {
-          DP.should.be.deep.equal(TEST_DATA.CKAN_V3_BASE_DATAPACKAGE);
+          DP.should.be.deep.equal(TEST_DATA.DKAN_V3_BASE_DATAPACKAGE);
           RS(true);
         });
       });
@@ -155,7 +155,7 @@ describe('Datapackage from remote', function() {
     Promise.each(['1.0', '2.0', '3.0'], function(V) {
       return new Promise(function(RS, RJ) {
         fromRemote('http://valid.url.com', {datapackage: 'tabular', source: 'dkan', version: V}).then(function(DP) {
-          DP.should.be.deep.equal(TEST_DATA.CKAN_V3_BASE_DATAPACKAGE);
+          DP.should.be.deep.equal(TEST_DATA.DKAN_V3_BASE_DATAPACKAGE);
           RS(true);
         });
       });

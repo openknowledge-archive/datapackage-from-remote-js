@@ -95,7 +95,10 @@ module.exports = function(url, options) {
           }]; }).object().value(),
 
           dkan: _.chain(['1.0', '2.0', '3.0']).map(function(V) { return [V, {
-            base: function(input) { fromOpenData(input.result[0], RS); }
+            base: function(input) { fromOpenData(input.result[0], function(DP) {
+              // For DKAN description is in .description, not in .notes in CKAN
+              RS(_.extend(DP, {description: input.result[0].description}))
+            }); }
           }]; }).object().value()
         })[that.options.source][that.options.version][
           that.options.datapackage.replace('tabular', 'base')
