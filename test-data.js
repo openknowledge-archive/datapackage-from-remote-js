@@ -214,7 +214,6 @@ module.exports.DKAN_V3_ENDPOINT_RESPONSE = {
     'author': 'Arnold',
     'author_email': 'opendata@cio.gov.bh',
     'state': 'active',
-    'version': null,
     'license_id': 'cc-by-sa',
     'type': 'dataset',
 

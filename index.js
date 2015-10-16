@@ -15,7 +15,7 @@ function fromOpenData(input, callback) {
     title           : input.title,
     description     : input.notes,
     homepage        : input.url,
-    version         : input.version,
+    version         : input.version || null,
     licences        : [{id: input.license_id, url: input.license_url}],
     author          : _.compact([input.author, input.author_email]).join(' '),
     contributors    : [],
