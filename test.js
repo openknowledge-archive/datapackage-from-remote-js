@@ -3,11 +3,14 @@ var assert = require('chai').assert;
 var chai = require('chai');
 var fromRemote = require('./index');
 var Promise = require('bluebird');
-var request = require('superagent');
-var requestMock = require('superagent-mock');
+//var request = require('superagent');
+//var requestMock = require('superagent-mock');
 var should = require('chai').should();
 var TEST_DATA = require('./test-data');
 
+var fetchMock = require('fetch-mock');
+//require('es6-promise').polyfill();
+require('isomorphic-fetch');
 
 describe('Datapackage from remote', function() {
   // Test schema infer only in one specific test case
@@ -70,24 +73,20 @@ describe('Datapackage from remote', function() {
   it('return Promise object', function(done, err) {
     if(err) done(err);
 
-    requestMock(request, [{
-      callback: function (match, data) { return {body: data}; },
-      fixtures: function (match, params) { return TEST_DATA.CKAN_V3_ENDPOINT_RESPONSE; },
-      pattern: '.*'
-    }]);
+    fetchMock.restore();
+    fetchMock.mock('http://valid.url.com', TEST_DATA.CKAN_V3_ENDPOINT_RESPONSE);
 
     fromRemote('http://valid.url.com').should.be.an.instanceOf(Promise);
     done();
   });
 
+
   it('map CKAN versions 1.0, 2.0 and 3.0 into base datapackage', function(done, err) {
     if(err) done(err);
 
-    requestMock(request, [{
-      callback: function (match, data) { return {body: data}; },
-      fixtures: function (match, params) { return responseWithSchemaCKAN; },
-      pattern: '.*'
-    }]);
+    fetchMock.restore();
+    fetchMock.mock('http://valid.url.com', responseWithSchemaCKAN);
+//    fetchMock.mock('http://crossorigin.me/https://ckannet-storage.commondatastorage.googleapis.com/2015-06-04T09:12:06.147Z/populationnumber-by-governorates-age-group-gender.csv', '');
 
     Promise.each(['1.0', '2.0', '3.0'], function(V) {
       return new Promise(function(RS, RJ) {
@@ -104,11 +103,8 @@ describe('Datapackage from remote', function() {
   it('map CKAN versions 1.0, 2.0 and 3.0 into tabular datapackage', function(done, err) {
     if(err) done(err);
 
-    requestMock(request, [{
-      callback: function (match, data) { return {body: data}; },
-      fixtures: function (match, params) { return responseWithSchemaCKAN; },
-      pattern: '.*'
-    }]);
+    fetchMock.restore();
+    fetchMock.mock('http://valid.url.com', responseWithSchemaCKAN);
 
     Promise.each(['1.0', '2.0', '3.0'], function(V) {
       return new Promise(function(RS, RJ) {
@@ -125,11 +121,8 @@ describe('Datapackage from remote', function() {
   it('map DKAN versions 1.0, 2.0 and 3.0 into base datapackage', function(done, err) {
     if(err) done(err);
 
-    requestMock(request, [{
-      callback: function (match, data) { return {body: data}; },
-      fixtures: function (match, params) { return responseWithSchemaDKAN; },
-      pattern: '.*'
-    }]);
+    fetchMock.restore();
+    fetchMock.mock('http://valid.url.com', responseWithSchemaDKAN);
 
     Promise.each(['1.0', '2.0', '3.0'], function(V) {
       return new Promise(function(RS, RJ) {
@@ -146,11 +139,8 @@ describe('Datapackage from remote', function() {
   it('map DKAN versions 1.0, 2.0 and 3.0 into tabular datapackage', function(done, err) {
     if(err) done(err);
 
-    requestMock(request, [{
-      callback: function (match, data) { return {body: data}; },
-      fixtures: function (match, params) { return responseWithSchemaDKAN; },
-      pattern: '.*'
-    }]);
+    fetchMock.restore();
+    fetchMock.mock('http://valid.url.com', responseWithSchemaDKAN);
 
     Promise.each(['1.0', '2.0', '3.0'], function(V) {
       return new Promise(function(RS, RJ) {
@@ -167,11 +157,8 @@ describe('Datapackage from remote', function() {
   it('translates "latest" value of version option into certain version', function(done, err) {
     if(err) done(err);
 
-    requestMock(request, [{
-      callback: function (match, data) { return {body: data}; },
-      fixtures: function (match, params) { return responseWithSchemaCKAN; },
-      pattern: '.*'
-    }]);
+    fetchMock.restore();
+    fetchMock.mock('http://valid.url.com', responseWithSchemaCKAN);
 
     fromRemote('http://valid.url.com', {version: 'latest'}).then(function(DP) {
       DP.should.be.deep.equal(TEST_DATA.CKAN_V3_BASE_DATAPACKAGE);
@@ -182,25 +169,25 @@ describe('Datapackage from remote', function() {
   it('infer schema for resources with no schema specified or invalid schema', function(done, err) {
     if(err) done(err);
 
-    requestMock(request, [{
-      callback: function (match, data) { return {body: data}; },
-      fixtures: function (match, params) { return TEST_DATA.CKAN_V3_ENDPOINT_RESPONSE; },
-      pattern: '.*'
-    }]);
-
-    // Resource with empty schema, but in csv format    
-    requestMock(request, [{
-      callback: function (match, data) { return {text: data}; },
-      fixtures: function (match, params) { return TEST_DATA.VALID_CSV; },
-      pattern: 'https://ckannet-storage.commondatastorage.googleapis.com/2015-06-04T09:12:06.147Z/populationnumber-by-governorates-age-group-gender.csv'
-    }]);
-    
-    // Resource in csv format with invalid schema
-    requestMock(request, [{
-      callback: function (match, data) { return {text: data}; },
-      fixtures: function (match, params) { return TEST_DATA.VALID_CSV; },
-      pattern: 'https://ckannet-storage.commondatastorage.googleapis.com/2015-06-04T09:12:06.147Z/populationnumber-by-governorates-age-group-gender-3.csv'
-    }]);
+    fetchMock.restore();
+    fetchMock.mock({routes: [
+          {
+            name: 'mock1',
+            matcher: 'http://valid.url.com',
+            response: TEST_DATA.CKAN_V3_ENDPOINT_RESPONSE
+          },
+          {
+            name: 'mock2',
+            matcher: 'http://crossorigin.me/https://ckannet-storage.commondatastorage.googleapis.com/2015-06-04T09:12:06.147Z/populationnumber-by-governorates-age-group-gender.csv',
+            response: TEST_DATA.VALID_CSV
+          },
+          {
+            name: 'mock3',
+            matcher: 'http://crossorigin.me/https://ckannet-storage.commondatastorage.googleapis.com/2015-06-04T09:12:06.147Z/populationnumber-by-governorates-age-group-gender-3.csv',
+            response:  TEST_DATA.VALID_CSV
+          }
+        ]}
+    );
 
     fromRemote('http://valid.url.com').then(function(DP) {
       DP.should.be.deep.equal(TEST_DATA.CKAN_V3_BASE_DATAPACKAGE);
