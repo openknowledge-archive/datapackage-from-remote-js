@@ -1,14 +1,19 @@
 {
   "name": "datapackage-from-remote",
-  "version": "0.0.2",
+  "version": "0.1.0",
   "description": "Create a Data Package from data at a remote location.",
-  "keywords": ["open data", "open knowledge", "data package"],
+  "keywords": [
+    "open data",
+    "open knowledge",
+    "data package"
+  ],
   "main": "index.js",
   "dependencies": {
     "csv": "^0.4.5",
+    "es6-promise": "^3.0.2",
+    "isomorphic-fetch": "^2.2.0",
     "json-table-schema": "0.0.2-alpha",
-	"bluebird": "^2.9.30",
-    "superagent": "^1.2.0",
+    "bluebird": "^2.9.30",
     "underscore": "^1.8.3",
     "validator": "^3.40.0"
   },
@@ -16,13 +21,12 @@
     "chai": "^3.0.0",
     "chai-spies": "^0.6.0",
     "mocha": "^2.2.5",
+    "fetch-mock": "^2.2.3",
     "promise-polyfill": "^2.0.2",
-    "query-string": "^2.3.0",
-    "superagent": "^1.2.0",
-    "superagent-mock": "^1.2.0"
+    "query-string": "^2.3.0"
   },
   "scripts": {
-    "test": "mocha ./"
+    "test": "mocha --es_staging --harmony ./"
   },
   "author": {
     "name": "Open Knowledge",

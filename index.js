@@ -5,9 +5,9 @@ var DKAN_LATEST_VER = '3.0';
 var infer = require('json-table-schema').infer;
 var MAX_CSV_ROWS = 100;
 var Promise = require('bluebird');
-var request = require('superagent');
 var validator = require('validator');
-
+require('es6-promise').polyfill();
+require('isomorphic-fetch');
 
 function fromOpenData(input, callback) {
   var datapackage = {
@@ -26,7 +26,6 @@ function fromOpenData(input, callback) {
     keywords        : _.pluck(input.tags, 'name')
   };
 
-
   // Get each resource and infer it's schema
   Promise.map(input.resources, function(R) {
     var resource = {
@@ -42,13 +41,18 @@ function fromOpenData(input, callback) {
     // Not sure which exactly .resources[] property specifies mime type
     if(!schema && _.contains([R.format, R.mimetype], 'text/csv'))
       return new Promise(function(RS, RJ) {
-        request.get('http://crossorigin.me/' + R.url).end(function(E, RES) {
-          csv.parse(_.first((RES.text || '').split('\n'), MAX_CSV_ROWS).join('\n'), function(EJ, D) {
-            if(EJ)
-              return RJ(EJ);
-
-            return RS(_.extend(resource, {schema: infer(D[0], _.rest(D))}));
-          });
+        fetch(R.url).then(function(response) {
+          return response.text();
+        }).then(function (text){
+          csv.parse(
+              _.first((text || '').split('\n'), MAX_CSV_ROWS).join('\n'),
+              function(EJ, D) {
+                if(EJ){
+                  return RJ(EJ);
+                }
+                return RS(_.extend(resource, {schema: infer(D[0], _.rest(D))}));
+              }
+          );
         });
       });
 
@@ -83,26 +87,50 @@ module.exports = function(url, options) {
   this.options.version = (version === 'latest') ? latestVersion : this.options.version;
 
   return new Promise(function(RS, RJ) {
-    request.get(url)
-      .end(function(E, R) {
-        if(E)
-          RJ('End point request failed: ' + E);
+    fetch(url).then(function(response) {
+      if (response.status != 200){
+        RJ('End point request failed: status = ' + response.status);
+      }
+      return response.json();
+    }).then(function (json){
+      // Mapping routines
+      ({
+        ckan:
+            _.chain(['1.0', '2.0', '3.0'])
+              .map(
+                function(V) {
+                  return [
+                    V,
+                    {
+                      base: function(input) {
+                        fromOpenData(input.result, RS);
+                      }
+                    }
+                  ];
+                }).object().value(),
 
-        // Mapping routines
-        ({
-          ckan: _.chain(['1.0', '2.0', '3.0']).map(function(V) { return [V, {
-            base: function(input) { fromOpenData(input.result, RS); }
-          }]; }).object().value(),
-
-          dkan: _.chain(['1.0', '2.0', '3.0']).map(function(V) { return [V, {
-            base: function(input) { fromOpenData(input.result[0], function(DP) {
-              // For DKAN description is in .description, not in .notes in CKAN
-              RS(_.extend(DP, {description: input.result[0].description}))
-            }); }
-          }]; }).object().value()
-        })[that.options.source][that.options.version][
+        dkan:
+            _.chain(['1.0', '2.0', '3.0'])
+                .map(
+                  function(V) {
+                    return [
+                      V,
+                      {
+                        base: function(input) {
+                          fromOpenData(
+                              input.result[0],
+                              function(DP) {
+                                // For DKAN description is in .description, not in .notes in CKAN
+                                RS(_.extend(DP, {description: input.result[0].description}))
+                              }
+                          );
+                        }
+                      }
+                    ];
+                  }).object().value()
+      })[that.options.source][that.options.version][
           that.options.datapackage.replace('tabular', 'base')
-        ](R.body);
-      });
+          ](json);
+    });
   });
 }
