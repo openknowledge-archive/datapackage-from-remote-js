@@ -5,7 +5,6 @@ var DKAN_LATEST_VER = '3.0';
 var infer = require('json-table-schema').infer;
 var MAX_CSV_ROWS = 100;
 var Promise = require('bluebird');
-//var request = require('superagent');
 var validator = require('validator');
 require('es6-promise').polyfill();
 require('isomorphic-fetch');
@@ -42,7 +41,7 @@ function fromOpenData(input, callback) {
     // Not sure which exactly .resources[] property specifies mime type
     if(!schema && _.contains([R.format, R.mimetype], 'text/csv'))
       return new Promise(function(RS, RJ) {
-        fetch('http://crossorigin.me/' + R.url).then(function(response) {
+        fetch(R.url).then(function(response) {
           return response.text();
         }).then(function (text){
           csv.parse(

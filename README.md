@@ -4,3 +4,6 @@
 [![Coveralls](http://img.shields.io/coveralls/okfn/datapackage-from-remote-js.svg?branch=master)](https://coveralls.io/r/okfn/datapackage-from-remote-js?branch=master)
 
 Create a Data Package from data at a remote location.
+
+Polyfills have been used:
+es6-promise

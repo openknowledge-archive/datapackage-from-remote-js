@@ -3,13 +3,10 @@ var assert = require('chai').assert;
 var chai = require('chai');
 var fromRemote = require('./index');
 var Promise = require('bluebird');
-//var request = require('superagent');
-//var requestMock = require('superagent-mock');
 var should = require('chai').should();
 var TEST_DATA = require('./test-data');
 
 var fetchMock = require('fetch-mock');
-//require('es6-promise').polyfill();
 require('isomorphic-fetch');
 
 describe('Datapackage from remote', function() {
@@ -86,7 +83,6 @@ describe('Datapackage from remote', function() {
 
     fetchMock.restore();
     fetchMock.mock('http://valid.url.com', responseWithSchemaCKAN);
-//    fetchMock.mock('http://crossorigin.me/https://ckannet-storage.commondatastorage.googleapis.com/2015-06-04T09:12:06.147Z/populationnumber-by-governorates-age-group-gender.csv', '');
 
     Promise.each(['1.0', '2.0', '3.0'], function(V) {
       return new Promise(function(RS, RJ) {
@@ -178,12 +174,12 @@ describe('Datapackage from remote', function() {
           },
           {
             name: 'mock2',
-            matcher: 'http://crossorigin.me/https://ckannet-storage.commondatastorage.googleapis.com/2015-06-04T09:12:06.147Z/populationnumber-by-governorates-age-group-gender.csv',
+            matcher: 'https://ckannet-storage.commondatastorage.googleapis.com/2015-06-04T09:12:06.147Z/populationnumber-by-governorates-age-group-gender.csv',
             response: TEST_DATA.VALID_CSV
           },
           {
             name: 'mock3',
-            matcher: 'http://crossorigin.me/https://ckannet-storage.commondatastorage.googleapis.com/2015-06-04T09:12:06.147Z/populationnumber-by-governorates-age-group-gender-3.csv',
+            matcher: 'https://ckannet-storage.commondatastorage.googleapis.com/2015-06-04T09:12:06.147Z/populationnumber-by-governorates-age-group-gender-3.csv',
             response:  TEST_DATA.VALID_CSV
           }
         ]}

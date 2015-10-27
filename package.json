@@ -23,7 +23,7 @@
     "mocha": "^2.2.5",
     "fetch-mock": "^2.2.3",
     "promise-polyfill": "^2.0.2",
-    "query-string": "^2.3.0",
+    "query-string": "^2.3.0"
   },
   "scripts": {
     "test": "mocha ./"
