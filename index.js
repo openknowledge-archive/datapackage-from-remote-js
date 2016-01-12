@@ -9,7 +9,7 @@ var validator = require('validator');
 require('es6-promise').polyfill();
 require('isomorphic-fetch');
 
-function fromOpenData(input, callback) {
+function fromOpenData(input, callback, options) {
   var datapackage = {
     name            : input.name || input.id,
     title           : input.title,
@@ -28,22 +28,35 @@ function fromOpenData(input, callback) {
 
   // Get each resource and infer it's schema
   Promise.map(input.resources, function(R) {
+
     var resource = {
       hash     : R.hash,
-      mediatype: R.format,
-      name     : R.name,
+      format   : R.format,
+      mediatype: (R.format && (R.format.toLowerCase() == 'csv'))? 'text/csv' : R.format,
+      name     : (R.name)? R.name.replace(/[^a-z0-9]/gi, '-').toLowerCase() : R.name,
+      title    : (R.title) ? R.title : R.name,
       url      : R.url
     };
+
+    if (R.hash){
+      if (R.hash.length == 40){
+        resource.hash = 'SHA1:'+R.hash;
+      }
+    }
 
     var schema = _.isObject(R.schema) && !_.isArray(R.schema) && R.schema;
 
 
     // Not sure which exactly .resources[] property specifies mime type
-    if(!schema && _.contains([R.format, R.mimetype], 'text/csv'))
-      return new Promise(function(RS, RJ) {
-        fetch(R.url).then(function(response) {
+    if(!schema && (
+        _.contains([R.format, R.mimetype], 'text/csv') ||
+        (R.format.toLowerCase() == 'csv')
+      )
+    ) return new Promise(function(RS, RJ) {
+        fetch(getUrl(R.url, options)).then(function(response) {
           return response.text();
-        }).then(function (text){
+        })
+          .then(function (text){
           csv.parse(
               _.first((text || '').split('\n'), MAX_CSV_ROWS).join('\n'),
               function(EJ, D) {
@@ -61,6 +74,10 @@ function fromOpenData(input, callback) {
   }).then(function(R) { callback(_.extend(datapackage, {resources: R})); });
 }
 
+function getUrl(url, options) {
+  options = options || {};
+  return (options.proxy)? options.proxy.replace('{url}', encodeURIComponent(url)): url
+}
 // Query remote endpoint url and map response according passed options
 module.exports = function(url, options) {
   var that = this;
@@ -87,7 +104,7 @@ module.exports = function(url, options) {
   this.options.version = (version === 'latest') ? latestVersion : this.options.version;
 
   return new Promise(function(RS, RJ) {
-    fetch(url).then(function(response) {
+    fetch(getUrl(url, options)).then(function(response) {
       if (response.status != 200){
         RJ('End point request failed: status = ' + response.status);
       }
@@ -103,7 +120,7 @@ module.exports = function(url, options) {
                     V,
                     {
                       base: function(input) {
-                        fromOpenData(input.result, RS);
+                        fromOpenData(input.result, RS, options);
                       }
                     }
                   ];
@@ -122,7 +139,8 @@ module.exports = function(url, options) {
                               function(DP) {
                                 // For DKAN description is in .description, not in .notes in CKAN
                                 RS(_.extend(DP, {description: input.result[0].description}))
-                              }
+                              },
+                              options
                           );
                         }
                       }

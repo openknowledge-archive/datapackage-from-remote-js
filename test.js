@@ -21,6 +21,16 @@ describe('Datapackage from remote', function() {
     })}
   );
 
+  var responseWithSchemaCKANTestMapping = _.extend(
+    {}, TEST_DATA.CKAN_V3_ENDPOINT_RESPONSE_mapping,
+
+    {result: _.extend({}, TEST_DATA.CKAN_V3_ENDPOINT_RESPONSE_mapping.result, {
+      resources: TEST_DATA.CKAN_V3_ENDPOINT_RESPONSE_mapping.result.resources.map(function(R) {
+        return _.extend({}, R, (R.format == 'text/csv' || R.format == 'csv') && {schema: TEST_DATA.VALID_TABLE_SCHEMA});
+      })
+    })}
+  );
+
   var responseWithSchemaDKAN = _.extend(
     {}, TEST_DATA.DKAN_V3_ENDPOINT_RESPONSE,
 
@@ -187,6 +197,18 @@ describe('Datapackage from remote', function() {
 
     fromRemote('http://valid.url.com').then(function(DP) {
       DP.should.be.deep.equal(TEST_DATA.CKAN_V3_BASE_DATAPACKAGE);
+      done();
+    });
+  });
+
+  it('Should map resource fields', function(done, err) {
+    if(err) done(err);
+
+    fetchMock.restore();
+    fetchMock.mock('http://valid.url.com', responseWithSchemaCKANTestMapping);
+
+    fromRemote('http://valid.url.com', {version: 'latest'}).then(function(DP) {
+      DP.should.be.deep.equal(TEST_DATA.TEST_DATAPACKAGE_RESULT);
       done();
     });
   });
