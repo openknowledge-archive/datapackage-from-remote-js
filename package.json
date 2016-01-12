@@ -1,6 +1,6 @@
 {
   "name": "datapackage-from-remote",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Create a Data Package from data at a remote location.",
   "keywords": [
     "open data",
